@@ -2,11 +2,15 @@ var webpack = require('webpack')
 var postcssImport = require('postcss-import')
 var autoprefixer = require('autoprefixer')
 var precss = require('precss')
+var path = require('path')
 
 module.exports = {
-  entry: './index.js',
+  entry: {
+    js: './app/index.js',
+    html: './app/index.html'
+  },
   output: {
-    filename: 'bundle.js',
+    path: path.join(__dirname, './public'),
     publicPath: 'http://localhost:4000/'
   },
   plugins: [
@@ -15,6 +19,10 @@ module.exports = {
   ],
   module: {
     loaders: [
+      {
+        test: /\.html$/,
+        loader: 'file?name=[name].[ext]'
+      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
