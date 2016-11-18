@@ -15,9 +15,12 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
+    "react-router-redux": "^4.0.7",
     "redux": "^3.6.0",
     "redux-actions": "^0.12.0",
+    "redux-auth": "0.0.5-beta5",
     "redux-promise": "^0.5.3",
+    "redux-thunk": "^2.1.0",
     "superagent": "^2.3.0"
   },
   "devDependencies": {
