@@ -9,7 +9,12 @@ import configureStore from './store'
 const store = configureStore()
 
 store.dispatch(configure({
-  apiUrl:                  'http://localhost:3000/auth/twitter.dev',
+  apiUrl:                'http://localhost:3000',
+  authProviderPaths: {
+    github:    "/auth/github",
+    facebook:  "/auth/facebook",
+    twitter:   '/auth/twitter'
+  }
 })).then(// ... render your app ... //
   ReactDOM.render(
     <Provider store={store}>

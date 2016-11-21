@@ -8,7 +8,7 @@ class App extends Component {
   }
 
   render() {
-    return <OAuthSignInButton />
+    return <OAuthSignInButton provider="twitter"/>
   }
 }
 
