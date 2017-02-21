@@ -14,11 +14,14 @@ const history = syncHistoryWithStore(browserHistory, store)
 
 const renderApp = (RootComponent) => {
   store.dispatch(configure({
-    apiUrl:      Config.ApiEndPoint,
-    authProviderPaths: {
-      github:    RequestUrls.auth.github,
-      facebook:  RequestUrls.auth.facebook,
-      twitter:   RequestUrls.auth.twitter
+      apiUrl              : Config.ApiEndPoint,
+      tokenValidationPath : RequestUrls.auth.validateToken,
+      signOutPath         : RequestUrls.auth.signOut,
+      accountDeletePath   : RequestUrls.auth.accountDelete,
+      authProviderPaths   : {
+        github    : RequestUrls.auth.github,
+        facebook  : RequestUrls.auth.facebook,
+        twitter   : RequestUrls.auth.twitter
     }
   })).then(
     ReactDOM.render(

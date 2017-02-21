@@ -1,8 +1,11 @@
 export default {
   communities: "/communities",
   auth: {
-    github:   "/auth/github",
-    facebook: "/auth/facebook",
-    twitter:  "/auth/twitter",
+    signOut       : "/auth/sign_out",
+    accountDelete : "/auth",
+    validateToken : "/auth/validate_token",
+    github        : "/auth/github",
+    facebook      : "/auth/facebook",
+    twitter       : "/auth/twitter",
   }
 }
