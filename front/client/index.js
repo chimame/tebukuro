@@ -15,15 +15,12 @@ const history = syncHistoryWithStore(browserHistory, store)
 const renderApp = (RootComponent) => {
   store.dispatch(configure({
       apiUrl              : Config.ApiEndPoint,
-      tokenValidationPath : RequestUrls.auth.validateToken,
-      signOutPath         : RequestUrls.auth.signOut,
-      accountDeletePath   : RequestUrls.auth.accountDelete,
       authProviderPaths   : {
         github    : RequestUrls.auth.github,
         facebook  : RequestUrls.auth.facebook,
         twitter   : RequestUrls.auth.twitter
     }
-  })).then(
+  },{clientOnly: true, cleanSession: false})).then(
     ReactDOM.render(
       <AppContainer>
         <RootComponent store={store} history={history} />
