@@ -1,0 +1,64 @@
+version: 2
+jobs:
+  build:
+    docker:
+       - image: google/cloud-sdk:alpine
+    working_directory: ~/app
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/app.tar
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache 
+              py-pip=9.0.0-r1 
+              gettext
+            pip install 
+              docker-compose==1.18.0
+            gcloud components install kubectl
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="18.02.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Check docker version
+          command: |
+            docker version
+      - run:
+        name: Build application Docker image
+        command: |
+          docker-compose build --build-arg BUNDLE_OPTIONS='--without development test' backend
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/app.tar asia.gcr.io/${PROJECT_NAME}/sample:latest
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/app.tar
+      - deploy:
+        name: Deploy application Docker image
+        command: |
+          if [ "${CIRCLE_BRANCH}" == "add_deploy_to_gke" ]; then
+            echo $ACCT_AUTH | base64 -d > ${HOME}/account-auth.json
+            TEBUKURO_IMAGE=us.gcr.io/${PROJECT_NAME}/tebukuro_backend:$CIRCLE_SHA1
+            docker tag tebukuro_backend $TEBUKURO_IMAGE
+            gcloud auth activate-service-account --key-file ${HOME}/account-auth.json
+            gcloud config set project $PROJECT_NAME
+            gcloud --quiet config set container/cluster $CLUSTER_NAME
+            gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials $CLUSTER_NAME
+            gcloud config set container/use_client_certificate True
+            gcloud docker -- push $TEBUKURO_IMAGE
+            ./script/deploy.sh
+          fi
