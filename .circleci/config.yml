@@ -46,7 +46,7 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "add_deploy_to_gke" ]; then
               echo $ACCT_AUTH | base64 -d > ${HOME}/account-auth.json
-              TEBUKURO_IMAGE=us.gcr.io/${PROJECT_NAME}/tebukuro_backend:$CIRCLE_SHA1
+              export TEBUKURO_IMAGE=us.gcr.io/${PROJECT_NAME}/tebukuro_backend:$CIRCLE_SHA1
               docker tag tebukuro_backend $TEBUKURO_IMAGE
               gcloud auth activate-service-account --key-file ${HOME}/account-auth.json
               gcloud config set project $PROJECT_NAME
