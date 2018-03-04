@@ -46,28 +46,19 @@ jobs:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
             - /caches/app.tar
-  deploy:
-    name: Deploy application Docker image
-    command: |
-      echo $ACCT_AUTH | base64 -d > ${HOME}/account-auth.json
-      TEBUKURO_IMAGE=us.gcr.io/${PROJECT_NAME}/tebukuro_backend:$CIRCLE_SHA1
-      docker tag tebukuro_backend $TEBUKURO_IMAGE
-      gcloud auth activate-service-account --key-file ${HOME}/account-auth.json
-      gcloud config set project $PROJECT_NAME
-      gcloud --quiet config set container/cluster $CLUSTER_NAME
-      gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
-      gcloud --quiet container clusters get-credentials $CLUSTER_NAME
-      gcloud config set container/use_client_certificate True
-      gcloud docker -- push $TEBUKURO_IMAGE
-      ./script/deploy.sh
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - build
-      - deploy: # deployはbuildのあとに実行
-          requires:
-            - build
-          filters: # developブランチの場合のみデプロイする
-            branches:
-              only: add_deploy_to_gke
+      - run:
+        name: Deploy application Docker image
+        command: |
+          if [ "${CIRCLE_BRANCH}" == "add_deploy_to_gke" ]; then
+            echo $ACCT_AUTH | base64 -d > ${HOME}/account-auth.json
+            TEBUKURO_IMAGE=us.gcr.io/${PROJECT_NAME}/tebukuro_backend:$CIRCLE_SHA1
+            docker tag tebukuro_backend $TEBUKURO_IMAGE
+            gcloud auth activate-service-account --key-file ${HOME}/account-auth.json
+            gcloud config set project $PROJECT_NAME
+            gcloud --quiet config set container/cluster $CLUSTER_NAME
+            gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials $CLUSTER_NAME
+            gcloud config set container/use_client_certificate True
+            gcloud docker -- push $TEBUKURO_IMAGE
+            ./script/deploy.sh
+          fi
