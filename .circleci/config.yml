@@ -35,7 +35,7 @@ jobs:
           name: Save Docker image layer cache
           command: |
             mkdir -p /caches
-            docker save tebukuro_backend:latest /caches/app.tar
+            docker save -o /caches/app.tar tebukuro_backend:latest
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
