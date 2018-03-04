@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: google/cloud-sdk:alpine
-    working_directory: ~/app
+    working_directory: ~/tebukuro
     steps:
       - checkout
       - setup_remote_docker
@@ -11,7 +11,7 @@ jobs:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - /caches/app.tar
+            - /caches/tebukuro.tar
       - run:
           name: Install dependencies
           command: |
@@ -36,11 +36,11 @@ jobs:
           command: |
             mkdir -p /caches
             docker images
-            docker save -o /caches/app.tar tebukuro_backend:latest
+            docker save -o /caches/tebukuro.tar tebukuro_backend:latest
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
-            - /caches/app.tar
+            - /caches/tebukuro.tar
       - run:
           name: Deploy application Docker image
           command: |
