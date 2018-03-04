@@ -23,8 +23,6 @@ jobs:
           command: |
             apk update
             apk add docker
-            rc-update add docker boot
-            service docker start
       - run:
           name: Check docker version
           command: |
